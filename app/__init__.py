@@ -33,4 +33,15 @@ def create_app():
 
     migrate = Migrate(app, db)
     from app import models
+    from .profile import profile as profile_blueprint
+    app.register_blueprint(profile_blueprint)
+
+    from .user import user as user_blueprint
+    app.register_blueprint(user_blueprint)
+
+    from .home import home as home_blueprint
+    app.register_blueprint(home_blueprint, url_prefix='/home')
+
+
+
     return app
