@@ -22,7 +22,7 @@ db = SQLAlchemy()
 
 
 def create_app():
-    app = Flask(__name__, instance_relative_config=True,template_folder='templates')
+    app = Flask(__name__, instance_relative_config=True)
     #app.config.from_object(app_config[config_name])
     app.config.from_object(config)
     db.init_app(app)
@@ -38,8 +38,8 @@ def create_app():
     from .profile import profile as profile_blueprint
     app.register_blueprint(profile_blueprint)
 
-    from .user import user as user_blueprint
-    app.register_blueprint(user_blueprint)
+    from .auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint)
 
     from .home import home as home_blueprint
     app.register_blueprint(home_blueprint)
