@@ -9,7 +9,7 @@ from . import home
 @home.route('/')
 def homepage():
     """
-    Render the homepage template on the / route
+    Render the homepage templates on the / route
     """
     return render_template('index.html', title="Welcome")
 
@@ -18,6 +18,6 @@ def homepage():
 @login_required
 def dashboard():
     """
-    Render the dashboard template on the /dashboard route
+    Render the dashboard templates on the /dashboard route
     """
     return render_template('dashboard.html', title="Dashboard")

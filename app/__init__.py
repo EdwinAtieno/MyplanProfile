@@ -22,7 +22,7 @@ db = SQLAlchemy()
 
 
 def create_app():
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__, instance_relative_config=True,template_folder='templates')
     #app.config.from_object(app_config[config_name])
     app.config.from_object(config)
     db.init_app(app)
@@ -32,7 +32,9 @@ def create_app():
     login_manager.login_view = "auth.login"
 
     migrate = Migrate(app, db)
+
     from app import models
+
     from .profile import profile as profile_blueprint
     app.register_blueprint(profile_blueprint)
 
@@ -40,7 +42,7 @@ def create_app():
     app.register_blueprint(user_blueprint)
 
     from .home import home as home_blueprint
-    app.register_blueprint(home_blueprint, url_prefix='/home')
+    app.register_blueprint(home_blueprint)
 
 
 
