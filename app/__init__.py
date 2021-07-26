@@ -13,7 +13,8 @@ from flask_login import LoginManager
 # after the db variable initialization
 login_manager = LoginManager()
 
-
+# after existing third-party imports
+from flask_bootstrap import Bootstrap
 # local imports
 #from config import app_config
 
@@ -27,11 +28,14 @@ def create_app():
     app.config.from_object(config)
     db.init_app(app)
 
+    Bootstrap(app)
     login_manager.init_app(app)
     login_manager.login_message = "You must be logged in to access this page."
     login_manager.login_view = "auth.login"
 
     migrate = Migrate(app, db)
+
+
 
     from app import models
 

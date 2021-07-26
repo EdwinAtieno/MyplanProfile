@@ -58,7 +58,7 @@ def login():
             flash('Invalid email or password.')
 
     # load login template
-    return render_template('auth/login.html', form=form, title='Login')
+    return render_template('l', form=form, title='Login')
 
 
 @auth.route('/logout')
