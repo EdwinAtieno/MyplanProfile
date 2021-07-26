@@ -27,7 +27,12 @@ class Users(db.Model, UserMixin):
 
         
 
-    @password.setter"""
+    @password.setter
+    def password(self, password):
+        
+        Set password to a hashed password
+        
+        self.password_hash = generate_password_hash(password)"""
     def verify_password(self, password):
 
         """Check if hashed passwords matches actual passwords"""
