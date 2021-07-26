@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, login_manager
 
 
-class Users(db.Model):
+class Users(db.Model, UserMixin):
     """
     Create an Users table
     """
@@ -18,24 +18,21 @@ class Users(db.Model):
     name = db.Column(db.String(50), nullable=False)
     password_hash = db.Column(db.String(80), nullable=False)
 
-    @property
+    """@property
     def password(self):
-        """
+        
         Prevent passwords from being accessed
-        """
-        raise AttributeError('passwords is not a readable attribute.')
+                raise AttributeError('passwords is not a readable attribute.')
 
-    @password.setter
-    def password(self, password):
+
         
-        """Set passwords to a hashed passwords"""
-        
+
+    @password.setter"""
+    def verify_password(self, password):
+
+        """Check if hashed passwords matches actual passwords"""
         self.password_hash = generate_password_hash(password)
 
-    def verify_password(self, password):
-        
-        """Check if hashed passwords matches actual passwords"""
-        
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
