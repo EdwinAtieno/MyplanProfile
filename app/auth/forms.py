@@ -3,8 +3,8 @@
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField, SubmitField, ValidationError
 from wtforms.validators import DataRequired, Email, EqualTo
-
-from ..models import User
+from werkzeug.security import generate_password_hash, check_password_hash
+from ..models import Users
 
 
 class RegistrationForm(FlaskForm):
@@ -23,11 +23,11 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Register')
 
     def validate_email(self, field):
-        if User.query.filter_by(email=field.data).first():
+        if Users.query.filter_by(email=field.data).first():
             raise ValidationError('Email is already in use.')
 
     def validate_username(self, field):
-        if User.query.filter_by(name=field.data).first():
+        if Users.query.filter_by(name=field.data).first():
             raise ValidationError('Username is already in use.')
 
 
@@ -36,5 +36,5 @@ class LoginForm(FlaskForm):
     Form for users to login
     """
     email = StringField('email', validators=[DataRequired(), Email()])
-    password = PasswordField('password', validators=[DataRequired()])
+    password = PasswordField('passwords', validators=[DataRequired()])
     submit = SubmitField('Login')
