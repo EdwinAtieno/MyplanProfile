@@ -1,7 +1,8 @@
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app import db, login_manager
+from app import db, login_manager, ma
+
 
 
 class Users(db.Model, UserMixin):
@@ -70,7 +71,12 @@ class Profile(db.Model):
     def __repr__(self):
         return '<Profile: {}>'.format(self.First_name)
 
+class ProfileSchema(ma.Schema):
+    class Meta:
+        fields = ('First_name','Last_name','User_Name','email','City','Country','Portfolio','Bio','Skills')
 
+# init schema
+profile_schema = ProfileSchema(many=True) #strict=True)
 
 
 #db.create_all()

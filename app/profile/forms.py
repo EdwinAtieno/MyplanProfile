@@ -11,30 +11,17 @@ class ProfileForm(FlaskForm):
 
     """Form for profile to create new account"""
 
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    name = StringField('Username', validators=[DataRequired()])
-    first_name = StringField('First Name', validators=[DataRequired()])
-    last_name = StringField('Last Name', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[
-                                        DataRequired(),
-                                        EqualTo('confirm_password')
-                                        ])
-    confirm_password = PasswordField('Confirm Password')
+    First_name = StringField('First_name', validators=[DataRequired()])
+    Last_name = StringField('Last_name', validators=[DataRequired()])
+    User_Name = StringField('User_Name', validators=[DataRequired()])
+    email = StringField('email', validators=[DataRequired(), Email()])
+    City = StringField('City', validators=[DataRequired()])
+    Country = StringField('Country',validators=[DataRequired()])
+    Portfolio = StringField('Portfolio', validators=[DataRequired()])
+    Bio = StringField('Bio', validators=[DataRequired()])
+    Skills = StringField('Skills', validators=[DataRequired()])
     submit = SubmitField('Register')
 
-    def validate_email(self, field):
-        if Profile.query.filter_by(email=field.data).first():
-            raise ValidationError('Email is already in use.')
-
-    def validate_username(self, field):
-        if Profile.query.filter_by(name=field.data).first():
-            raise ValidationError('Username is already in use.')
 
 
-class LoginForm(FlaskForm):
 
-    """Form for profile update"""
-
-    email = StringField('email', validators=[DataRequired(), Email()])
-    password = PasswordField('passwords', validators=[DataRequired()])
-    submit = SubmitField('Login')

@@ -1,74 +1,72 @@
-"""# app/auth/views.py
+# app/auth/views.py
 
-from flask import flash, redirect, render_template, url_for
+from flask import flash, redirect, render_template, url_for,jsonify
 from flask_login import login_required, login_user, logout_user
+from ..auth import forms as fm
 
-from . import auth
-from .forms import LoginForm, RegistrationForm
+from . import profile
+from .forms import ProfileForm
 from .. import db
-from ..models import Users
+from ..models import Profile, profile_schema
 
 
-@auth.route('/register', methods=['GET', 'POST'])
-def register():
-
-    Handle requests to the /register route
-    Add an user to the database through the registration form
-
-    form = RegistrationForm()
+@profile.route('/profile', methods=['GET', 'POST'])
+def register_profile():
+    """Handle requests to the /profile route
+        Add a profile to the database through the Profileform form"""
+    forms = fm.RegistrationForm
+    form = ProfileForm()
     if form.validate_on_submit():
-        user = Users(email=form.email.data,
-                     name=form.name.data,
-                     password_hash=form.password.data)
+        user = Profile.query.filter_by(email=form.email.data).first()
+        if user is not None:
+            Profile(First_name=form.First_name.data,
+                    Last_name=form.Last_name.data,
+                    User_Name=form.User_Name.data,
+                    City=form.City.data,
+                    Country=form.Country.data,
+                    Portfolio=form.Portfolio.data,
+                    Bio=form.Bio.data,
+                    Skills=form.Skills.data)
 
-        # add employee to the database
-        db.session.add(user)
-        db.session.commit()
-        flash('You have successfully registered! You may now login.')
+            # add employee to the database
 
-        # redirect to the login page
-        return redirect(url_for('auth.login'))
+            db.session.commit()
+            flash('You have successfully updated your profile.')
+
+            # redirect to the login page
+            return redirect(url_for('profile.display'))
+        else:
+            profile = Profile(First_name = form.First_name.data,
+                            Last_name =form.Last_name.data,
+                            User_Name = form.User_Name.data,
+                            email=forms.email.data,
+                            City = form.City.data,
+                            Country = form.Country.data,
+                            Portfolio = form.Portfolio.data,
+                            Bio = form.Bio.data,
+                            Skills = form.Skills.data)
+
+
+            # add employee to the database
+            db.session.add(profile)
+            db.session.commit()
+            flash('You have successfully registered! You may now login.')
+
+            # redirect to the login page
+            return redirect(url_for('profile.display'))
 
     # load registration template
-    return render_template('register.html', form=form, title='Register')
+    return render_template('dashboard.html', form=form, title='Profile')
 
 
-@auth.route('/login', methods=['GET', 'POST'])
-def login():
 
-    Handle requests to the /login route
-    Log an user in through the login form
+@profile.route('/profile_display')
+def dispalay():
 
-    form = LoginForm()
-    if form.validate_on_submit():
-
-        # check whether employee exists in the database and whether
-        # the passwords entered matches the passwords in the database
-        user = Users.query.filter_by(email=form.email.data).first()
-        if user is not None and user.verify_password(form.password.data):
-            # log employee in
-            login_user(user)
-
-            # redirect to the dashboard page after login
-            return redirect(url_for('home.dashboard'))
-
-        # when login details are incorrect
-        else:
-            flash('Invalid email or passwords.')
-
-    # load login template
-    return render_template('login.html', form=form, title='Login')
+    """Handle requests to the /profile route
+    update an user """
+    Profiles = Profile.query.all()
+    profile_list = profile_schema(Profiles)
+    return jsonify(profile_list)
 
 
-@auth.route('/logout')
-@login_required
-def logout():
-
-    Handle requests to the /logout route
-    Log an user out through the logout link
-
-    logout_user()
-    flash('You have successfully been logged out.')
-
-    # redirect to the login page
-    return redirect(url_for('auth.login'))"""
