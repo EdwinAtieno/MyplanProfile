@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from instance import config
 # after existing third-party imports
 from flask_migrate import Migrate
-from flask_marshmallow import Marshmallow
+
 # after existing third-party imports
 from flask_login import LoginManager
 
@@ -20,7 +20,7 @@ from flask_bootstrap import Bootstrap
 
 # db variable initialization
 db = SQLAlchemy()
-ma = Marshmallow()
+
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)

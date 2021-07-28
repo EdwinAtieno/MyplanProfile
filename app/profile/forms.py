@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from ..models import Profile
 
 
+
 class ProfileForm(FlaskForm):
 
     """Form for profile to create new account"""
@@ -21,7 +22,6 @@ class ProfileForm(FlaskForm):
     Bio = StringField('Bio', validators=[DataRequired()])
     Skills = StringField('Skills', validators=[DataRequired()])
     submit = SubmitField('Register')
-
 
 
 
