@@ -33,8 +33,8 @@ def register_profile():
             db.session.commit()
             flash('You have successfully registered! You may now login.')
 
-            # redirect to the login page
-            #return redirect(url_for('profile.display'))
+            # redirect to the dashboard page
+            return redirect(url_for('home.dashboard'))
         else:
             id = 1
             users = Profile.query.get_or_404(id)
@@ -53,6 +53,7 @@ def register_profile():
 
                 db.session.commit()
                 flash('You have successfully updated your profile.')
+                return redirect(url_for('home.dashboard'))
             except:
                 flash('sorry mate')
 
