@@ -21,7 +21,7 @@ class ProfileForm(FlaskForm):
     Portfolio = StringField('Portfolio', validators=[DataRequired()])
     Bio = StringField('Bio', validators=[DataRequired()])
     Skills = StringField('Skills', validators=[DataRequired()])
-    submit = SubmitField('Register')
+    submit = SubmitField('Save/update')
 
 
 
