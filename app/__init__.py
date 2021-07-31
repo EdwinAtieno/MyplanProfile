@@ -6,7 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 from instance import config
 # after existing third-party imports
 from flask_migrate import Migrate
-
+from flask_marshmallow import Marshmallow
+from flask_jwt_extended import JWTManager
 # after existing third-party imports
 from flask_login import LoginManager
 
@@ -20,20 +21,22 @@ from flask_bootstrap import Bootstrap
 
 # db variable initialization
 db = SQLAlchemy()
-
-
+ma = Marshmallow()
+jwt = JWTManager()
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
     #app.config.from_object(app_config[config_name])
     app.config.from_object(config)
     db.init_app(app)
+    ma.init_app(app)
+    jwt.init_app(app)
 
     Bootstrap(app)
     login_manager.init_app(app)
     login_manager.login_message = "You must be logged in to access this page."
     login_manager.login_view = "auth.login"
 
-    migrate = Migrate(app, db)
+    migrate = Migrate(app, db, ma)
 
 
 

@@ -1,7 +1,7 @@
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app import db, login_manager
+from app import db, login_manager,ma
 
 
 
@@ -35,14 +35,27 @@ class Users(db.Model, UserMixin):
         
         self.password_hash = generate_password_hash(password)"""
     def verify_password(self, password):
-
-        """Check if hashed passwords matches actual passwords"""
+        """ Check if hashed passwords matches actual passwords"""
         self.password_hash = generate_password_hash(password)
 
         return check_password_hash(self.password_hash, password)
+    """def __init__(self, email, name, password_hash):
+        self.email = email
+        self.name = name
+        self.password = password_hash"""
 
     def __repr__(self):
         return '<User: {}>'.format(self.name)
+
+class UserSchema(ma.Schema):
+    class Meta:
+        fields = ('email','name','password')
+
+user_schema = UserSchema(many=True)
+
+
+
+
 
 
 # Set up user_loader
@@ -68,10 +81,28 @@ class Profile(db.Model):
     Bio = db.Column(db.String(500))
     Skills = db.Column(db.String(80))
 
+    def __init__(self, First_name, Last_name, User_Name,email,City,Country,Portfolio,Bio,Skills):
+        self.First_name = First_name
+        self.Last_name = Last_name
+        self.User_Name = User_Name
+        self.email = email
+        self.City = City
+        self.Country = Country
+        self.Portfolio = Portfolio
+        self.Bio = Bio
+        self.Skills = Skills
+
+
+
+
+
     def __repr__(self):
         return '<Profile: {}>'.format(self.First_name)
 
 
+class ProfileSchema(ma.Schema):
+    class Meta:
+        fields = ('First_name', 'Last_name', 'User_Name', 'City','Country','Portfolio','Bio','Skills')
 
+profile_schema = ProfileSchema(many=True)
 
-#db.create_all()

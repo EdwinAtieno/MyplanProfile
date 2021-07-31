@@ -1,8 +1,9 @@
 # app/auth/views.py
 
-from flask import flash, redirect, render_template, url_for
+from flask import flash, redirect, render_template, url_for,request,jsonify
 from flask_login import login_required, login_user, logout_user
-
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import  create_access_token
 from . import auth
 from .forms import LoginForm, RegistrationForm
 from .. import db
@@ -15,49 +16,40 @@ def register():
     Handle requests to the /register route
     Add an user to the database through the registration form
     """
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = Users(email=form.email.data,
-                     name=form.name.data,
-                     password_hash=form.password.data)
 
-        # add employee to the database
-        db.session.add(user)
-        db.session.commit()
-        flash('You have successfully registered! You may now login.')
-
-        # redirect to the login page
-        return redirect(url_for('auth.login'))
-
-    # load registration template
-    return render_template('register.html', form=form, title='Register')
+    data = request.get_json()
+    if data['email'] is None or data['password'] is None:
+        return 400  # missing arguments
+    if Users.query.filter_by(email=data['email']).first() is not None:
+        return 400  # existing user
+    hashed_password = generate_password_hash(data['password'], method='sha256')
+    new_user = Users(email=data['email'], name=data['name'], password_hash=hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({'username': new_user.name}), 201
 
 
-@auth.route('/login', methods=['GET', 'POST'])
+
+@auth.route('/login', methods=['GET','POST'])
 def login():
     """
     Handle requests to the /login route
     Log an user in through the login form
     """
-    form = LoginForm()
-    if form.validate_on_submit():
+    data = request.get_json()
+    user = Users.query.filter_by(email=data["email"]).first()
+    if not user:
+        return jsonify({"message": "Invalid email or password!"})
+    if check_password_hash(user.password_hash, data['password']):
 
-        # check whether employee exists in the database and whether
-        # the passwords entered matches the passwords in the database
-        user = Users.query.filter_by(email=form.email.data).first()
-        if user is not None and user.verify_password(form.password.data):
-            # log employee in
-            login_user(user)
+       """ return redirect(url_for('home.dashboard')),200"""
+       access_token = create_access_token(identity = data["email"])
+       return jsonify({"access_token": access_token})
 
-            # redirect to the dashboard page after login
-            return redirect(url_for('home.dashboard'))
+    return jsonify({"message": "Invalid email or password!"}), 401
 
-        # when login details are incorrect
-        else:
-            flash('Invalid email or passwords.')
 
-    # load login template
-    return render_template('login.html', form=form, title='Login')
+
 
 
 @auth.route('/logout')
