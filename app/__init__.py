@@ -10,8 +10,10 @@ from flask_marshmallow import Marshmallow
 from flask_jwt_extended import JWTManager
 # after existing third-party imports
 from flask_login import LoginManager
-
+from flask_cors import CORS, cross_origin
 # after the db variable initialization
+
+
 login_manager = LoginManager()
 
 # after existing third-party imports
@@ -20,8 +22,10 @@ from flask_bootstrap import Bootstrap
 #from config import app_config
 
 # db variable initialization
+
 db = SQLAlchemy()
 ma = Marshmallow()
+cors = CORS()
 jwt = JWTManager()
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
@@ -29,7 +33,9 @@ def create_app():
     app.config.from_object(config)
     db.init_app(app)
     ma.init_app(app)
+    cors.init_app(app)
     jwt.init_app(app)
+
 
     Bootstrap(app)
     login_manager.init_app(app)

@@ -3,14 +3,19 @@
 from flask import flash, redirect, render_template, url_for,request,jsonify
 from flask_login import login_required, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import  create_access_token
+from flask_jwt_extended import create_access_token,create_refresh_token
+from flask_jwt_extended import unset_jwt_cookies
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity
+
 from . import auth
 from .forms import LoginForm, RegistrationForm
-from .. import db
+from .. import db,cors, cross_origin
 from ..models import Users
 
 
 @auth.route('/register', methods=['GET', 'POST'])
+@cross_origin()
 def register():
     """
     Handle requests to the /register route
@@ -31,6 +36,7 @@ def register():
 
 
 @auth.route('/login', methods=['GET','POST'])
+@cross_origin()
 def login():
     """
     Handle requests to the /login route
@@ -48,8 +54,13 @@ def login():
 
     return jsonify({"message": "Invalid email or password!"}), 401
 
-
-
+@auth.route('/refresh', methods=['GET','POST'])
+@jwt_required(refresh=True)
+@cross_origin()
+def refresh():
+    identity = get_jwt_identity()
+    access_token = create_access_token(identity=identity)
+    return jsonify(access_token=access_token)
 
 
 @auth.route('/logout')
@@ -61,6 +72,8 @@ def logout():
     """
     logout_user()
     flash('You have successfully been logged out.')
+    response = jsonify({"msg": "logout successful"})
+    unset_jwt_cookies(response)
 
     # redirect to the login page
     return redirect(url_for('auth.login'))

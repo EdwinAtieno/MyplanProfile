@@ -6,11 +6,12 @@ from ..auth import forms as fm
 
 from . import profile
 from .forms import ProfileForm
-from .. import db
+from .. import db,cross_origin
 from ..models import Profile, Users
 
 
 @profile.route('/profile', methods=['GET', 'PUT','POST'])
+@cross_origin()
 @login_required
 def register_profile():
     """Handle requests to the /profile route
@@ -64,7 +65,8 @@ def register_profile():
     return redirect(url_for('profile.get_profiles')),200
 
 @profile.route('/profile_details', methods=['GET'])
-#@login_required
+@cross_origin()
+@login_required
 def get_profiles():
 
     profiles = Profile.query.all()
